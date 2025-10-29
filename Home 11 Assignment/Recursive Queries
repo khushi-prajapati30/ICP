@@ -1,0 +1,64 @@
+import java.io.*;
+import java.util.*;
+
+public class RecursiveQueries {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter out = new PrintWriter(System.out);
+
+        int MAX = 1000000;
+        int[] g = new int[MAX + 1];
+        for (int x = 1; x <= MAX; x++) {
+            g[x] = computeG(x);
+        }
+
+        int[][] pref = new int[10][MAX + 1];  
+        for (int k = 1; k <= 9; k++) {
+            pref[k][0] = 0;
+        }
+        for (int i = 1; i <= MAX; i++) {
+            for (int k = 1; k <= 9; k++) {
+                pref[k][i] = pref[k][i - 1];
+            }
+            int val = g[i];
+            if (val >= 1 && val <= 9) {
+                pref[val][i]++;
+            }
+        }
+
+        int Q = Integer.parseInt(br.readLine().trim());
+        while (Q-- > 0) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int l = Integer.parseInt(st.nextToken());
+            int r = Integer.parseInt(st.nextToken());
+            int k = Integer.parseInt(st.nextToken());
+
+            if (k < 1 || k > 9) {
+                out.println(0);
+            } else {
+                int ans = pref[k][r] - (l > 1 ? pref[k][l - 1] : 0);
+                out.println(ans);
+            }
+        }
+
+        out.flush();
+    }
+
+    static int computeG(int x) {
+        if (x < 10) return x;
+        long prod;
+        while (x >= 10) {
+            prod = 1;
+            int y = x;
+            while (y > 0) {
+                int d = y % 10;
+                if (d != 0) {
+                    prod *= d;
+                }
+                y /= 10;
+            }
+            x = (int)prod;
+        }
+        return x;
+    }
+}
